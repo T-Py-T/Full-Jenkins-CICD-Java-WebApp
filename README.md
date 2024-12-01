@@ -1,5 +1,7 @@
 # Java-Blogging-App (DevOps Demo)
 
+[!HINT] This project is a simple java web app that allows users to post their thoughts and blog digitally. Its mostly used to prove that the pipeline is working.
+
 This DevOps project employs a comprehensive CI/CD pipeline to automate the development and deployment process. The architecture emphasizes security, performance, and reliability, integrating industry-leading tools and practices.
 
 ## My DevOps Scripting Examples
@@ -7,7 +9,6 @@ This DevOps project employs a comprehensive CI/CD pipeline to automate the devel
 - My current examples of this project are located here:
   - This included Terraform, Bash scripts and other scripting
   - https://github.com/T-Py-T/devops-install-scripts
-
 
 ## Best Practices Followed
 
@@ -55,14 +56,20 @@ The CI/CD pipeline is depicted in the diagram below, which mirrors the "as-built
 
 - **Maven**:
   - Simplifies dependency management and builds process for Java projects.
-  - Ensures that all dependencies are resolved before building the application, reducing errors and inconsistencies.
+  - Ensures that all dependenciess ns are resolved before building the application, reducing errors and inconsistencies.
 
 - **Nexus Repository Manager**:
   - Acts as a centralized artifact repository, storing and managing Maven dependencies, Docker images, and other build artifacts.
   - Improves build speed by caching dependencies locally, reducing network traffic and build times.
   - Enhances security by providing a controlled, internal source for third-party libraries and internally developed components.
 
-  ![Nexus Dashboard](images/defaultImage.png)
+  - **Nexus hosted artifacts**
+  ![Nexus Dashboard](images/NexusDashboard.png)
+  - **Nexus Artifacts**
+  ![Nexus Artifacts](images/NexusArtifacts.png)
+  - **Nexus feedback in Jenkins**
+  ![Nexus Feedback](images/NexusFeedback.png)
+
 
 #### C. **Security Scanning**
 
@@ -91,11 +98,17 @@ The CI/CD pipeline is depicted in the diagram below, which mirrors the "as-built
 - **Elastic Kubernetes Service (EKS)**:
   - Manages the deployment and scaling of containerized applications in a highly available environment.
   - Ensures zero downtime by automatically scaling and redistributing workloads as needed.
-  - Namespace configurations (e.g., `webapps` and `namespace 2`) isolate different parts of the system for better organization and security.
+  - Namespace configurations (e.g., `webapps` and `namespace 2`) isolate different parts of the system for better organization and security. The second namespace is not currently used, but is planned for a similar python web app
+  - The configuration for EKS was update from the **terraform.tf** listed in the linked repo and shown implemented below in a later section.
 
-  ![EKS Cluster Image](images/defaultImage.png)
+- **EKS Nodes**
+  ![EKS Nodes Image](images/EKS-Nodes.png)
 
-  *Callout Area*: Add diagrams of pod allocation, namespaces, and auto-scaling configurations, showing how EKS facilitates resilient deployments.
+- **EKS CLuster**
+  ![EKS Cluster Image](images/EKS-Cluster.png)
+
+- **EKS Networking**
+  ![EKS Cluster Image](images/EKS-Networking.png)
 
 #### F. **Monitoring and Observability**
 
@@ -103,13 +116,13 @@ The CI/CD pipeline is depicted in the diagram below, which mirrors the "as-built
   - Collects metrics from various components of the application and infrastructure, providing deep insights into system health and performance.
   - Supports custom queries to detect anomalies and trigger alerts proactively.
 
-  ![Prometheus Image](images/defaultImage.png)
+  ![Prometheus Image](images/Prometheus.png)
 
 - **Grafana**:
   - Provides user-friendly dashboards for visualizing Prometheus metrics.
   - Enables stakeholders to monitor key performance indicators (KPIs) in real-time, ensuring system reliability.
 
-  ![Grafana Image](images/defaultImage.png)
+  ![Grafana Image](images/Grafana.png)
 
   *Callout Area*: Include snapshots of Grafana dashboards and Prometheus query outputs, demonstrating the observability aspect of the pipeline.
 
@@ -133,7 +146,7 @@ The CI/CD pipeline is depicted in the diagram below, which mirrors the "as-built
 terraform plan
 ```
 
-![Terraform Plan](images/defaultImage.png)
+![Terraform Plan](images/TerraformPlan.png)
 
 ``` bash
 terraform apply --auto-approve
@@ -141,7 +154,6 @@ terraform apply --auto-approve
 
 ![Terraform Apply](images/TerraformApply.png)
 ![Terraform Output](images/Terraform-Output.png)
-
 
 #### H. **AWS Integration**
 
