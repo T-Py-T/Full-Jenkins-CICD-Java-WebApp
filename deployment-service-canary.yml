@@ -1,3 +1,4 @@
+# Deployment 
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -6,24 +7,24 @@ spec:
   selector:
     matchLabels:
       app: bloggingapp
-      track: stable
-  replicas: 2
+      track: canary
+  replicas: 1
   template:
     metadata:
       labels:
         app: bloggingapp
-        track: stable
+        track: canary
     spec:
       containers:
         - name: bloggingapp
-          image: tnt850910/java-bloggingapp:1.0.0  # Updated image to private DockerHub image
+          image: tnt850910/java-bloggingapp:latest  # Updated image to private DockerHub image
           imagePullPolicy: Always
           ports:
-            - containerPort: 8080
+            - containerPort: 8081
           livinessProbe:
             httpGet:
               path: /
-              port: 8080
+              port: 8081
             initialDelaySeconds: 20
             periodSeconds: 15
             timeoutSeconds: 2
@@ -37,6 +38,7 @@ spec:
       imagePullSecrets:
         - name: regcred # Reference to the Docker registry secret
 --- 
+# Horizontal Pod Autoscaler
 apiVersion: autoscaling/v2beta1
 kind: HorizontalPodAutoscaler
 metadata:
@@ -69,16 +71,18 @@ spec:
         value: 100
         periodSeconds: 15
 ---
+# Load Balancer Service
+
 apiVersion: v1
 kind: Service
 metadata:
-  name: bloggingapp-ssvc
+  name: bloggingapp-ssvc-canary
 spec:
   selector:
     app: bloggingapp
-    track: stable
+    track: canary
   ports:
     - protocol: "TCP"
       port: 80
-      targetPort: 8080 
+      targetPort: 8081 
   type: LoadBalancer
