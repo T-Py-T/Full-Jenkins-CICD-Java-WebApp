@@ -1,4 +1,4 @@
-# Java-Blogging-App (DevOps Demo)
+# Java-Blogging-App (DevOps Full CI/CD with Jenkins)
 
 [!HINT] This project is a simple java web app that allows users to post their thoughts and blog digitally. Its mostly used to prove that the pipeline is working.
 
