@@ -50,9 +50,13 @@ The CI/CD pipeline is depicted in the diagram below, which mirrors the "as-built
 
 - **Without Terraform :**
 - Kubernetes deployment (apply and get pods) fails
-![Jenkins Pipeline](images/Jenkins-Pipeline.png)
+  - Terraform files are located in my [devops-install-scripts](https://github.com/T-Py-T/devops-install-scripts) repo
+
+  ![Jenkins Pipeline](images/Jenkins-Pipeline.png)
+
 - **With Terraform :**
-![Completed Kube Deployment](images/Completed-Kube-Deployment.png)
+
+  ![Completed Kube Deployment](images/Completed-Kube-Deployment.png)
 
 - **Maven**:
   - Simplifies dependency management and builds process for Java projects.
