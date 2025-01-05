@@ -80,21 +80,19 @@ The CI/CD pipeline is depicted in the diagram below, which mirrors the "as-built
   - Scans Docker images and source code for vulnerabilities, ensuring that potential security issues are caught before deployment.
   - Generates detailed reports that can be used to address vulnerabilities promptly.
 
-  ![Trivy Scan](images/defaultImage.png)
+  ![Trivy Scan](images/trivy-scan.png)
 
 - **SonarQube**:
   - Conducts comprehensive code analysis to identify bugs, code smells, and security vulnerabilities.
   - Provides actionable insights to improve code quality and enforce compliance with coding standards.
 
-  ![Sonar Report](images/defaultImage.png)
+  ![Sonar Report](images/sonarqube-example.png)
 
 #### D. **Containerization**
 
 - **Docker**:
   - Packages the Java application into lightweight, portable containers, ensuring consistent environments across development, testing, and production stages.
   - Simplifies deployment by abstracting underlying infrastructure differences.
-
-  *Callout Area*: Showcase Dockerfile and container registry management, explaining how this enables rapid, reliable deployments.
 
 #### E. **Container Orchestration**
 
@@ -126,8 +124,6 @@ The CI/CD pipeline is depicted in the diagram below, which mirrors the "as-built
   - Enables stakeholders to monitor key performance indicators (KPIs) in real-time, ensuring system reliability.
 
   ![Grafana Image](images/Grafana.png)
-
-  *Callout Area*: Include snapshots of Grafana dashboards and Prometheus query outputs, demonstrating the observability aspect of the pipeline.
 
 #### G. **Infrastructure as Code (IaC)**
 
