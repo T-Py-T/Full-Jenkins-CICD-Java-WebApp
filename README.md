@@ -74,7 +74,6 @@ The CI/CD pipeline is depicted in the diagram below, which mirrors the "as-built
   - **Nexus feedback in Jenkins**
   ![Nexus Feedback](images/NexusFeedback.png)
 
-
 #### C. **Security Scanning**
 
 - **Aqua Trivy**:
