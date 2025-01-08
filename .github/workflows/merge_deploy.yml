@@ -1,4 +1,4 @@
-name: Merge Deploy
+name: PR Checks
 # This is meant to be copy the functionality of my jenkins build and push
 
 on:
