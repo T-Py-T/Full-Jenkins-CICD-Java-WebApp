@@ -2,7 +2,7 @@ name: Merge Deploy
 # This is meant to be copy the functionality of my jenkins build and push
 
 on:
-  push:
+  pull_request:
     branches: [ main ]
 
 jobs:
@@ -59,7 +59,7 @@ jobs:
       run: docker push ${{ env.DOCKER_IMAGE }}
 
     # Needs Terraform code to setup EKS Cluster
-    
+
     # - name: Configure AWS Credentials
     #   uses: aws-actions/configure-aws-credentials@v1
     #   with:
