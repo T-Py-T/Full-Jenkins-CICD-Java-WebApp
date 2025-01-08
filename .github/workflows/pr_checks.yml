@@ -23,21 +23,15 @@ jobs:
       with:
         maven-version: 3.8.2
 
-    - name: Compile
-      run: mvn compile
+    - name: Build
+      run: mvn package
 
     - name: Test
       run: mvn test
 
-    - name: Trivy FS Scan
+    - name: Trivy File System Scan
       uses: aquasecurity/trivy-action@master
       with:
         scan-type: 'fs'
+        path: '.'
         format: 'table'
-        output: 'fs-report.txt'
-
-    - name: Upload Trivy FS scan results
-      uses: actions/upload-artifact@v2
-      with:
-        name: trivy-fs-results
-        path: fs-report.txt
