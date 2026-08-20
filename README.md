@@ -1,14 +1,53 @@
-# Java-Blogging-App (DevOps Full CI/CD with Jenkins)
+# A Full Jenkins Delivery Path for a Java Service
 
-[!HINT] This project is a simple java web app that allows users to post their thoughts and blog digitally. Its mostly used to prove that the pipeline is working.
+The Java application in this repository is intentionally small. It is a stable
+workload for exercising the harder system around it: source validation,
+artifact management, container security, infrastructure provisioning,
+Kubernetes rollout, and operational visibility.
 
-This DevOps project employs a comprehensive CI/CD pipeline to automate the development and deployment process. The architecture emphasizes security, performance, and reliability, integrating industry-leading tools and practices.
+## The so-what
 
-## My DevOps Scripting Examples
+Pipeline demos often stop at "the build passed." This project follows one
+change across the complete delivery chain:
 
-- My current examples of this project are located here:
-  - This included Terraform, Bash scripts and other scripting
-  - https://github.com/T-Py-T/devops-install-scripts
+```text
+source -> Maven verification -> SonarQube -> Nexus -> container build
+       -> Trivy -> EKS deployment -> Prometheus/Grafana
+```
+
+That makes the repository useful as a repeatable platform testbed. A small
+application keeps failures attributable to the delivery system instead of to
+product complexity.
+
+## What this repository demonstrates
+
+| Concern | Implementation and evidence |
+| --- | --- |
+| Build correctness | Maven compilation, test execution, coverage, and executable JAR creation |
+| Artifact lifecycle | Nexus-backed dependency and artifact flow with retained screenshots |
+| Security gates | SonarQube analysis plus Trivy source/image scanning |
+| Infrastructure | Terraform-provisioned AWS and EKS components |
+| Deployment | Containerized Java service and Kubernetes rollout manifests |
+| Observability | Prometheus and Grafana views of the deployed workload |
+| Merge safety | A lightweight, PR-only GitHub gate runs `mvn verify`; expensive integration work remains local or in Jenkins |
+
+## Inspect the proof
+
+- [Delivery architecture](images/CICD-Architechture.png)
+- [Jenkins pipeline](images/Jenkins-Pipeline.png)
+- [Completed Kubernetes deployment](images/Completed-Kube-Deployment.png)
+- [Nexus artifacts](images/NexusArtifacts.png)
+- [SonarQube analysis](images/sonarqube-example.png)
+- [Trivy scan](images/trivy-scan.png)
+- [Terraform plan and apply](images/TerraformPlan.png)
+- [Reusable CI and infrastructure examples](https://github.com/T-Py-T/devops-install-scripts)
+
+## Scope
+
+This is a deployment-system case study, not a claim that the sample blogging
+application is a production product. The retained screenshots show that the
+documented path was exercised; the current PR gate proves only the bounded
+Maven build and test contract.
 
 ## Best Practices Followed
 
@@ -98,7 +137,7 @@ The CI/CD pipeline is depicted in the diagram below, which mirrors the "as-built
 
 - **Elastic Kubernetes Service (EKS)**:
   - Manages the deployment and scaling of containerized applications in a highly available environment.
-  - Ensures zero downtime by automatically scaling and redistributing workloads as needed.
+  - Supports horizontal scaling and rolling replacement; availability still depends on workload replicas, disruption budgets, and tested probes.
   - Namespace configurations (e.g., `webapps` and `namespace 2`) isolate different parts of the system for better organization and security. The second namespace is not currently used, but is planned for a similar python web app
   - The configuration for EKS was update from the **terraform.tf** listed in the linked repo and shown implemented below in a later section.
 
