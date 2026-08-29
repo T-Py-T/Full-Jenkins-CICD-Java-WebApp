@@ -1,210 +1,137 @@
-# A Full Jenkins Delivery Path for a Java Service
+# Jenkins CI/CD Lab for a Java Service
 
-The Java application in this repository is intentionally small. It is a stable
-workload for exercising the harder system around it: source validation,
-artifact management, container security, infrastructure provisioning,
-Kubernetes rollout, and operational visibility.
+A hands-on Jenkins delivery lab that moves a Maven/Spring Boot service through
+build, analysis, artifact storage, container scanning, EKS deployment, and
+monitoring.
 
-## The so-what
-
-Pipeline demos often stop at "the build passed." This project follows one
-change across the complete delivery chain:
+The Java workload is deliberately small. The focus of the repository is the
+delivery path around it:
 
 ```text
-source -> Maven verification -> SonarQube -> Nexus -> container build
-       -> Trivy -> EKS deployment -> Prometheus/Grafana
+GitHub
+  └──► Jenkins
+         ├──► Maven build and tests
+         ├──► SonarQube analysis
+         ├──► Nexus artifact publication
+         ├──► Docker build
+         ├──► Trivy source and image scans
+         └──► Kubernetes deployment on EKS
+                  └──► Prometheus and Grafana
 ```
 
-That makes the repository useful as a repeatable platform testbed. A small
-application keeps failures attributable to the delivery system instead of to
-product complexity.
+![CI/CD architecture](images/CICD-Architechture.png)
 
-## What this repository demonstrates
+## Repository contents
 
-| Concern | Implementation and evidence |
+| Path | Purpose |
 | --- | --- |
-| Build correctness | Maven compilation, test execution, coverage, and executable JAR creation |
-| Artifact lifecycle | Nexus-backed dependency and artifact flow with retained screenshots |
-| Security gates | SonarQube analysis plus Trivy source/image scanning |
-| Infrastructure | Terraform-provisioned AWS and EKS components |
-| Deployment | Containerized Java service and Kubernetes rollout manifests |
-| Observability | Prometheus and Grafana views of the deployed workload |
-| Merge safety | A lightweight, PR-only GitHub gate runs `mvn verify`; expensive integration work remains local or in Jenkins |
+| [`pom.xml`](pom.xml) | Spring Boot 3.3 / Java 17 build and artifact metadata |
+| [`Dockerfile`](Dockerfile) | Packages the Maven-built JAR into a Java runtime image |
+| [`deployment-service.yml`](deployment-service.yml) | Stable Kubernetes deployment, service, and autoscaler |
+| [`deployment-service-canary.yml`](deployment-service-canary.yml) | Canary deployment example |
+| [`images/`](images) | Captures from the Jenkins, Nexus, EKS, Terraform, Trivy, SonarQube, Prometheus, and Grafana setup |
+| [`.github/workflows/pr_init_checks.yml`](.github/workflows/pr_init_checks.yml) | Pull-request-only Maven validation |
 
-## Inspect the proof
+The Terraform configuration used to create the Jenkins and EKS environment is
+maintained in
+[`devops-install-scripts`](https://github.com/T-Py-T/devops-install-scripts).
 
-- [Delivery architecture](images/CICD-Architechture.png)
-- [Jenkins pipeline](images/Jenkins-Pipeline.png)
-- [Completed Kubernetes deployment](images/Completed-Kube-Deployment.png)
-- [Nexus artifacts](images/NexusArtifacts.png)
-- [SonarQube analysis](images/sonarqube-example.png)
-- [Trivy scan](images/trivy-scan.png)
-- [Terraform plan and apply](images/TerraformPlan.png)
-- [Reusable CI and infrastructure examples](https://github.com/T-Py-T/devops-install-scripts)
+## Local validation
 
-## Scope
+Requirements:
 
-This is a deployment-system case study, not a claim that the sample blogging
-application is a production product. The retained screenshots show that the
-documented path was exercised; the current PR gate proves only the bounded
-Maven build and test contract.
+- Java 17;
+- Maven 3.9+; and
+- Docker if you want to build the container image.
 
-## Best Practices Followed
+Validate the Maven project:
 
-1. **Automation**: The build, test, and deployment process is automated, reducing the risk of human error and speeding up the cycle times. Automation ensures that every code change is tested and validated before deployment.
-2. **Security First**: Integrating Aqua Trivy and SonarQube ensures that security vulnerabilities and code quality issues are detected and addressed early in the pipeline, fostering a secure development lifecycle.
-3. **Scalability**: Kubernetes provides a scalable infrastructure that can handle fluctuating loads, ensuring consistent performance during peak traffic.
-4. **Observability**: Using Grafana and Prometheus allows real-time monitoring, enabling proactive identification and resolution of potential issues before they impact users.
-5. **Version Control and Code Review**: GitHub serves as the foundation for collaboration and quality control, ensuring that only well-reviewed, high-quality code reaches production.
-
-## Architecture
-
-The CI/CD pipeline is depicted in the diagram below, which mirrors the "as-built" system, showcasing the tools and workflows utilized.
-
-![Architecture Diagram](images/CICD-Architechture.png)
-
-### Key Components
-
-#### A. **Source Code Management**
-
-- **GitHub**: 
-  - Serves as the backbone of version control, ensuring seamless collaboration among team members.
-  - Pull requests and branch strategies help enforce coding standards and encourage peer reviews.
-  - Integrated with Jenkins to trigger automated builds and tests upon code commits, ensuring continuous integration.
-
-#### B. **Build and Test Automation**
-
-- **Jenkins**:
-  - Orchestrates the CI/CD pipeline, ensuring that builds, tests, and deployments are fully automated.
-  - Integrates with tools like GitHub and Docker to create a streamlined process from code commit to deployment.
-  - Provides real-time feedback to developers about build status and test results.
-
-- **Jenkins-TODO**:
-  - Relies on external Terraform setup for environment to work
-    - When cluster is built API changes
-    - Permissions for Jenkins need to be created with cluster (kubectl)
-  - Call Terraform in pipeline
-    - Allow for tear down of resources after load testing is completed.
-    - Pipeline created cluster can be used for load or AB testing.
-
-- **Without Terraform :**
-- Kubernetes deployment (apply and get pods) fails
-  - Terraform files are located in my [devops-install-scripts](https://github.com/T-Py-T/devops-install-scripts) repo
-
-  ![Jenkins Pipeline](images/Jenkins-Pipeline.png)
-
-- **With Terraform :**
-
-  ![Completed Kube Deployment](images/Completed-Kube-Deployment.png)
-
-- **Maven**:
-  - Simplifies dependency management and builds process for Java projects.
-  - Ensures that all dependenciess ns are resolved before building the application, reducing errors and inconsistencies.
-
-- **Nexus Repository Manager**:
-  - Acts as a centralized artifact repository, storing and managing Maven dependencies, Docker images, and other build artifacts.
-  - Improves build speed by caching dependencies locally, reducing network traffic and build times.
-  - Enhances security by providing a controlled, internal source for third-party libraries and internally developed components.
-
-  - **Nexus hosted artifacts**
-  ![Nexus Dashboard](images/NexusDashboard.png)
-  - **Nexus Artifacts**
-  ![Nexus Artifacts](images/NexusArtifacts.png)
-  - **Nexus feedback in Jenkins**
-  ![Nexus Feedback](images/NexusFeedback.png)
-
-#### C. **Security Scanning**
-
-- **Aqua Trivy**:
-  - Scans Docker images and source code for vulnerabilities, ensuring that potential security issues are caught before deployment.
-  - Generates detailed reports that can be used to address vulnerabilities promptly.
-
-  ![Trivy Scan](images/trivy-scan.png)
-
-- **SonarQube**:
-  - Conducts comprehensive code analysis to identify bugs, code smells, and security vulnerabilities.
-  - Provides actionable insights to improve code quality and enforce compliance with coding standards.
-
-  ![Sonar Report](images/sonarqube-example.png)
-
-#### D. **Containerization**
-
-- **Docker**:
-  - Packages the Java application into lightweight, portable containers, ensuring consistent environments across development, testing, and production stages.
-  - Simplifies deployment by abstracting underlying infrastructure differences.
-
-#### E. **Container Orchestration**
-
-- **Elastic Kubernetes Service (EKS)**:
-  - Manages the deployment and scaling of containerized applications in a highly available environment.
-  - Supports horizontal scaling and rolling replacement; availability still depends on workload replicas, disruption budgets, and tested probes.
-  - Namespace configurations (e.g., `webapps` and `namespace 2`) isolate different parts of the system for better organization and security. The second namespace is not currently used, but is planned for a similar python web app
-  - The configuration for EKS was update from the **terraform.tf** listed in the linked repo and shown implemented below in a later section.
-
-- **EKS Nodes**
-  ![EKS Nodes Image](images/EKS-Nodes.png)
-
-- **EKS CLuster**
-  ![EKS Cluster Image](images/EKS-Cluster.png)
-
-- **EKS Networking**
-  ![EKS Cluster Image](images/EKS-Networking.png)
-
-#### F. **Monitoring and Observability**
-
-- **Prometheus**:
-  - Collects metrics from various components of the application and infrastructure, providing deep insights into system health and performance.
-  - Supports custom queries to detect anomalies and trigger alerts proactively.
-
-  ![Prometheus Image](images/Prometheus.png)
-
-- **Grafana**:
-  - Provides user-friendly dashboards for visualizing Prometheus metrics.
-  - Enables stakeholders to monitor key performance indicators (KPIs) in real-time, ensuring system reliability.
-
-  ![Grafana Image](images/Grafana.png)
-
-#### G. **Infrastructure as Code (IaC)**
-
-- **Terraform**:
-  - Automates the provisioning and management of infrastructure required for the Kubernetes stack that hosts the Java application.
-  - Ensures infrastructure consistency and repeatability by defining it as code.
-  - The following key AWS resources are provisioned:
-    - **VPC**: Creates a virtual private cloud for network isolation.
-    - **Subnets**: Two public subnets in `us-east-1a` and `us-east-1b` availability zones.
-    - **Internet Gateway**: Provides internet access to the resources within the VPC.
-    - **Route Tables and Associations**: Configures routing for the subnets to allow public internet access.
-    - **Security Groups**: Defines rules for cluster and node communication, ensuring controlled ingress and egress.
-    - **EKS Cluster**: Deploys an Elastic Kubernetes Service cluster for managing the application containers.
-    - **EKS Node Group**: Provisions a scalable worker node group with `t2.large` instances to support container workloads.
-    - **IAM Roles and Policies**: Configures roles and permissions for both the EKS cluster and node group to interact with AWS services.
-  - Facilitates rapid updates and scaling of infrastructure to match application requirements.
-
-``` bash
-terraform plan
+```bash
+mvn --batch-mode --no-transfer-progress verify
 ```
 
-![Terraform Plan](images/TerraformPlan.png)
+Build the container after a JAR is available under `target/`:
 
-``` bash
-terraform apply --auto-approve
+```bash
+docker build -t java-delivery-lab:local .
 ```
 
-![Terraform Apply](images/TerraformApply.png)
-![Terraform Output](images/Terraform-Output.png)
+Parse the Kubernetes resources before applying them:
 
-#### H. **AWS Integration**
+```bash
+python -m pip install pyyaml
+python - <<'PY'
+from pathlib import Path
+import yaml
 
-- **EC2**: Used to house the servers that control the CI/CD process and handles the actions.
-  ![EC2 Instances](images/EC2_Instances.png)
+for path in (Path("deployment-service.yml"), Path("deployment-service-canary.yml")):
+    list(yaml.safe_load_all(path.read_text()))
+    print(f"ok: {path}")
+PY
+```
 
-- **VPC**:
-  - Ensures a secure and isolated environment for hosting applications and infrastructure.
-- **S3 Bucket**:
-  - Stores artifacts, logs, and backups, ensuring durability and availability.
-- **Route 53**:
-  - Manages domain names and routes traffic efficiently to ensure seamless user experiences.
-- **CloudFront CDN**:
-  - Enhances performance by caching content close to end users.
-- **Network Load Balancer**:
-  - Distributes incoming traffic to backend services, improving fault tolerance and scalability.
+The Kubernetes manifests reference a private Docker Hub image and a
+`regcred` pull secret. Replace the image name and create the registry secret in
+your own cluster before deployment.
+
+## Jenkins pipeline setup
+
+The original lab used these integrations:
+
+1. GitHub for source control and webhook events.
+2. Maven and Java 17 for compile, test, and package steps.
+3. SonarQube for static analysis.
+4. Nexus Repository Manager for Maven artifacts.
+5. Docker and Trivy for image creation and vulnerability scanning.
+6. Terraform for the AWS network and EKS cluster.
+7. `kubectl` for deployment and rollout checks.
+8. Prometheus and Grafana for cluster and workload monitoring.
+
+Configure Jenkins credentials for GitHub, Nexus, Docker Hub, and AWS through
+the Jenkins credential store. Do not put those values in the Jenkinsfile,
+Maven settings, or Kubernetes manifests.
+
+The Nexus URLs in [`pom.xml`](pom.xml) describe the original lab environment.
+Replace them with your repository manager URL before publishing artifacts.
+
+## Deployment flow
+
+After the Maven and security gates pass:
+
+```bash
+docker build -t <registry>/java-bloggingapp:<version> .
+docker push <registry>/java-bloggingapp:<version>
+```
+
+Update the image in the Kubernetes manifest, then deploy it:
+
+```bash
+kubectl apply --dry-run=server -f deployment-service.yml
+kubectl apply -f deployment-service.yml
+kubectl rollout status deployment/bloggingapp-deployment
+kubectl get pods,svc,hpa
+```
+
+The stable manifest runs two replicas behind a `LoadBalancer` service and uses
+an HPA targeting CPU utilization. The canary file shows a second track with a
+separate service so a new image can be exercised independently.
+
+## Screenshots
+
+| Stage | Capture |
+| --- | --- |
+| Jenkins pipeline | ![Jenkins pipeline](images/Jenkins-Pipeline.png) |
+| Nexus artifacts | ![Nexus artifacts](images/NexusArtifacts.png) |
+| SonarQube | ![SonarQube analysis](images/sonarqube-example.png) |
+| Trivy | ![Trivy scan](images/trivy-scan.png) |
+| EKS deployment | ![Completed Kubernetes deployment](images/Completed-Kube-Deployment.png) |
+| Prometheus | ![Prometheus](images/Prometheus.png) |
+| Grafana | ![Grafana](images/Grafana.png) |
+
+Additional infrastructure captures are available in [`images/`](images).
+
+## License
+
+Repository-specific code, manifests, and documentation are available under the
+[MIT License](LICENSE). The Maven wrapper retains its Apache License 2.0
+headers; see [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
