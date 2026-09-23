@@ -1,5 +1,8 @@
 # Third-party notices
 
+This license covers repository-specific work. Third-party files remain under
+their original licenses and copyright notices.
+
 The Maven wrapper scripts (`mvnw` and `mvnw.cmd`) contain Apache Software
 Foundation material distributed under Apache License 2.0. Their original
 headers are preserved.
