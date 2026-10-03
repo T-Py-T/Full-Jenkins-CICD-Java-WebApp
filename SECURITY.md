@@ -37,10 +37,9 @@ Thank you for helping keep this lab safe for others to learn from.
 | Topic | Document |
 | --- | --- |
 | Pipeline lab, local validation, deployment | [README.md](README.md) |
-| Hireability & discoverability index | [docs/HIREABILITY.md](docs/HIREABILITY.md) |
 | License (MIT) | [LICENSE](LICENSE) |
 
 ## Tip cite
 
-Documentation baseline: `7ce2184` (README hireability lean on `main`). This
+Documentation baseline: `7ce2184`. This
 security lean is pending Steward resolve in its shipping PR.

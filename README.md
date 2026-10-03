@@ -132,8 +132,7 @@ Additional infrastructure captures are available in [`images/`](images).
 
 ## Discoverability
 
-Skim index, GitHub topics, and policy cross-links:
-[docs/HIREABILITY.md](docs/HIREABILITY.md). Vulnerability reporting:
+Vulnerability reporting:
 [SECURITY.md](SECURITY.md).
 
 ## License
