@@ -17,6 +17,9 @@ public class PostService {
     }
 
     public void save(Post post) {
+        if (post.getUser() == null) {
+            throw new IllegalArgumentException("Post must be associated with a user");
+        }
         post.setCreatedAt(LocalDateTime.now());
         postRepository.save(post);
     }
