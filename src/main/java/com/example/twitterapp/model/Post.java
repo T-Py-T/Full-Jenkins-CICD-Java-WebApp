@@ -6,6 +6,8 @@ import java.time.LocalDateTime;
 @Entity
 public class Post {
 
+    private static final String UNKNOWN_AUTHOR = "Unknown";
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -48,5 +50,17 @@ public class Post {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public String getAuthorUsername() {
+        return user != null ? user.getUsername() : UNKNOWN_AUTHOR;
+    }
+
+    @PrePersist
+    @PreUpdate
+    private void validateContent() {
+        if (content == null || content.trim().isEmpty()) {
+            throw new IllegalArgumentException("Post content must not be blank");
+        }
     }
 }
