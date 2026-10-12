@@ -9,14 +9,27 @@ permissions:
   contents: read
 
 jobs:
-  build-and-test:
+  build-test-and-lint:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 20
     container:
       image: maven:3.9.11-eclipse-temurin-17@sha256:e4a7ace3dc0d645ed97f8d9ad0b0d3f0b14fa8d150138f27f116d7105a639b82
     steps:
       - name: Checkout repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - name: Compile and test
-        run: mvn --batch-mode --no-transfer-progress verify
+      - name: Compile, test, coverage check, and lint
+        run: ./mvnw --batch-mode --no-transfer-progress verify
+
+  repo-script-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Install PyYAML for manifest validation
+        run: pip install --disable-pip-version-check pyyaml
+
+      - name: Jenkinsfile, wrapper, and manifest script tests
+        run: bash scripts/run-repo-script-tests.sh

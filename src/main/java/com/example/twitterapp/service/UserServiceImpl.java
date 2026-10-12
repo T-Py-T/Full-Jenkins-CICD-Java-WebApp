@@ -2,21 +2,18 @@ package com.example.twitterapp.service;
 
 import com.example.twitterapp.model.User;
 import com.example.twitterapp.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 public class UserServiceImpl implements UserService {
 
-    @Autowired
-    PasswordEncoder passwordEncoder;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    private UserRepository userRepository;
-
-    public UserServiceImpl(UserRepository userRepository) {
-        super();
+    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override

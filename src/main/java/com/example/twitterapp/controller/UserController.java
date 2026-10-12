@@ -2,8 +2,6 @@ package com.example.twitterapp.controller;
 
 import com.example.twitterapp.model.User;
 import com.example.twitterapp.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,10 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 @Controller
 public class UserController {
 
-    @Autowired
-    private UserDetailsService userDetailsService;
-
-    private UserService userService;
+    private final UserService userService;
 
     public UserController(UserService userService) {
         this.userService = userService;
