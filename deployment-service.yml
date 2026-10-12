@@ -29,10 +29,10 @@ spec:
             timeoutSeconds: 2
           resources:
             limits:
-              memory: 128Mi
+              memory: 512Mi
               cpu: 500m
             requests:
-              memory: 64Mi
+              memory: 256Mi
               cpu: 250m
       imagePullSecrets:
         - name: regcred # Reference to the Docker registry secret

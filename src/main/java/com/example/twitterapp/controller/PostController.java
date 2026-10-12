@@ -43,6 +43,9 @@ public class PostController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         CustomUserDetails user = (CustomUserDetails) auth.getPrincipal();
         var existingUser = userService.findByUsername(user.getUsername());
+        if (existingUser == null) {
+            return "redirect:/login?error";
+        }
         post.setUser(existingUser);
         postService.save(post);
         return "redirect:/";
