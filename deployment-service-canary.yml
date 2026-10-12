@@ -21,7 +21,7 @@ spec:
           imagePullPolicy: Always
           ports:
             - containerPort: 8081
-          livinessProbe:
+          livenessProbe:
             httpGet:
               path: /
               port: 8081
