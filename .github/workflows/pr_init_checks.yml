@@ -9,14 +9,14 @@ permissions:
   contents: read
 
 jobs:
-  build-and-test:
+  build-test-and-lint:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     container:
       image: maven:3.9.11-eclipse-temurin-17@sha256:e4a7ace3dc0d645ed97f8d9ad0b0d3f0b14fa8d150138f27f116d7105a639b82
     steps:
       - name: Checkout repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - name: Compile and test
+      - name: Compile, test, and lint
         run: mvn --batch-mode --no-transfer-progress verify
