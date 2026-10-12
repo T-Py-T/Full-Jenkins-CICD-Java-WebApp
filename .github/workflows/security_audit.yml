@@ -1,0 +1,51 @@
+name: Security audit
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened, ready_for_review]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  maven-dependency-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    container:
+      image: maven:3.9.11-eclipse-temurin-17@sha256:fa7aa19829157d299ff05f631b51697a388dcd2f6955e84249ecc652015f217b
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Cache Maven repository (incl. NVD data)
+        uses: actions/cache@d4323d4df104b026a6aa633fdb11d772146be0bf # v4.2.2
+        with:
+          path: ~/.m2/repository
+          key: m2-${{ runner.os }}-dependency-check-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            m2-${{ runner.os }}-dependency-check-
+            m2-${{ runner.os }}-
+
+      - name: OWASP dependency-check
+        run: mvn --batch-mode --no-transfer-progress verify -Ddependency-check.skip=false
+        env:
+          NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
+
+  container-and-workflow-scan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Trivy config (Dockerfiles)
+        uses: aquasecurity/trivy-action@b6643a29fecd7f34b3597bc6acb0a98b03d33ff8 # v0.33.1
+        with:
+          scan-type: config
+          scan-ref: Dockerfile
+          severity: HIGH,CRITICAL
+          exit-code: 1
+          trivyignores: .trivyignore
